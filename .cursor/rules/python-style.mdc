@@ -1,0 +1,48 @@
+---
+description: Python coding style for this project
+globs: **/*.py
+alwaysApply: false
+---
+
+# Python Style
+
+## General
+- Python 3.12+, strict type hints on every function and class attribute
+- Line length: 100 characters (Black + Flake8)
+- No module-level docstrings at the top of files; no obvious inline comments
+- Use `msg = "..."` pattern before `raise`, never inline strings in `raise`
+
+## Imports
+- Standard library → third-party → local (`app.*`), one blank line between groups
+- No wildcard imports
+
+## Types
+- Prefer built-in generics: `list[str]`, `dict[str, int]`, `tuple[int, ...]`
+- Use `X | Y` union syntax instead of `Optional[X]` / `Union[X, Y]`
+- Use `Protocol` for interfaces/ports, not ABC
+
+## Naming
+- `snake_case` for functions, variables, modules
+- `PascalCase` for classes
+- Private helpers: `_single_underscore` prefix
+
+## No module docstrings
+```python
+# ❌ BAD — file starts with a docstring
+"""User entity."""
+
+from dataclasses import dataclass
+
+# ✅ GOOD — imports first, no file-level docstring
+from dataclasses import dataclass
+```
+
+## raise pattern
+```python
+# ❌ BAD
+raise ValueError("Full name must not be empty")
+
+# ✅ GOOD
+msg = "Full name must not be empty"
+raise ValueError(msg)
+```

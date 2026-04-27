@@ -1,0 +1,41 @@
+---
+description: Run project linters after every Python change
+globs: **/*.py
+alwaysApply: false
+---
+
+# Linting & Formatting
+
+After editing Python files, verify with the project toolchain:
+
+```bash
+export PYTHONPATH=src
+
+# Format check
+poetry run black --check src/ tests/
+
+# Lint
+poetry run flake8 src/ tests/
+
+# Type check
+poetry run mypy src/
+```
+
+Or use the Makefile shortcuts:
+
+```bash
+make format    # black src/ tests/
+make lint      # flake8 src/ tests/
+make typecheck # mypy src/
+```
+
+## Key rules (`.flake8`)
+- `max-line-length = 100`
+- `extend-ignore = E203, W503` (Black compatibility)
+
+## Key rules (`pyproject.toml → [tool.mypy]`)
+- `strict = true`
+- `disallow_untyped_defs = true`
+- `warn_return_any = true`
+
+Fix all reported issues before committing. Never use `# type: ignore` without a comment explaining why.

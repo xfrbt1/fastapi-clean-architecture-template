@@ -1,0 +1,10 @@
+[flake8]
+max-line-length = 100
+extend-exclude =
+    .git,
+    __pycache__,
+    .venv,
+    .mypy_cache,
+    migrations/versions
+# Black compatibility (avoid false positives on slice spacing / line breaks)
+extend-ignore = E203, W503

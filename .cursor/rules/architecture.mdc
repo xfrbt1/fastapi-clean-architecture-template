@@ -1,0 +1,36 @@
+---
+description: Clean Architecture layer rules and dependency direction
+alwaysApply: true
+---
+
+# Clean Architecture Rules
+
+## Layer dependency direction
+```
+api → application → domain ← infrastructure
+```
+- `domain` has zero framework imports (no FastAPI, SQLAlchemy, Redis)
+- `application` depends only on `domain`; defines ports as `Protocol` classes
+- `infrastructure` implements ports; imports SQLAlchemy, Redis, etc.
+- `api` wires everything via FastAPI `Depends`
+
+## Adding a new entity — checklist
+See README "Adding a New Entity" section for the full step-by-step guide.
+CI runs these checks automatically via `.github/workflows/ci.yml`.
+
+Quick order:
+1. `domain/entities/<entity>.py` — dataclass
+2. `domain/value_objects/<vo>.py` — if needed
+3. `domain/repositories/<entity>_repository.py` — Protocol
+4. `domain/exceptions.py` — domain errors
+5. `application/dto/<entity>.py` — DTOs
+6. `application/mappers/<entity>.py` — entity ↔ DTO
+7. `application/use_cases/<entity>/` — one file per use case
+8. `infrastructure/db/models/<entity>.py` — ORM model
+9. `infrastructure/repositories/<entity>_repository.py` — SQLAlchemy impl
+10. `api/schemas/<entity>.py` — Pydantic request/response schemas
+11. `api/v1/<entity>s.py` — router
+12. `api/v1/router.py` — register the new router
+13. `migrations/` — alembic revision
+14. `tests/unit/domain/test_<entity>.py`
+15. `tests/integration/api/test_<entity>s_flow.py`

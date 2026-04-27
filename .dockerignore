@@ -1,0 +1,16 @@
+.git
+.gitignore
+.idea
+.vscode
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+htmlcov
+.env
+*.md
+tests
+.dockerignore
+Dockerfile

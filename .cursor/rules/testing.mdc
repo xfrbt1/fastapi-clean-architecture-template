@@ -1,0 +1,41 @@
+---
+description: Testing conventions and reference patterns
+globs: tests/**/*.py
+alwaysApply: false
+---
+
+# Testing
+
+## Structure
+```
+tests/
+  unit/domain/          # pure domain logic — no DB, no HTTP
+  integration/api/      # real DB + Redis via ASGI client
+  conftest.py           # shared fixtures (JWT secret)
+  integration/conftest.py  # engine, http_client, truncate_users
+```
+
+## Reference tests
+- **Unit**: `tests/unit/domain/test_user_entity.py` — test domain entities/VOs in isolation
+- **Integration**: `tests/integration/api/test_users_flow.py` — full HTTP flow with real DB
+
+## Conventions
+- All test code and docstrings in **English**
+- Use `pytest.mark.asyncio` for async tests
+- Integration fixtures use `scope="session"` for the DB engine; per-test truncation via `autouse`
+- Skip integration tests gracefully when DB is unreachable: `pytest.skip(...)`
+- Assert status codes explicitly: `assert resp.status_code == 200, resp.text`
+- Name test functions: `test_<what>_<condition>` e.g. `test_register_duplicate_email_returns_409`
+
+## Running tests
+```bash
+export PYTHONPATH=src
+poetry run pytest tests/unit -v                  # no DB needed
+poetry run pytest tests/integration -v           # requires docker compose up -d
+make test                                        # both suites
+```
+
+## Adding tests for a new entity
+1. Unit test in `tests/unit/domain/test_<entity>.py` — validate business rules
+2. Integration test in `tests/integration/api/test_<entity>s_flow.py` — CRUD via HTTP
+3. Add `truncate_<entity>s` autouse fixture in `tests/integration/conftest.py`
